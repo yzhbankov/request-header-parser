@@ -3,21 +3,20 @@
  */
 var express = require('express');
 var app = express();
+var publicIp = require('public-ip');
 
 app.get('/', function (req, res) {
+    var ipAdress;
+    publicIp.v4().then(function (ip) {
+        ipAdress = ip;
+        var language = req.acceptsLanguages("en-US", "ru-RU");
+        var os = req.headers['user-agent'].split('(')[1].split(')')[0];
 
-    var ip = req.headers['x-forwarded-for'] ||
-        req.connection.remoteAddress ||
-        req.socket.remoteAddress ||
-        req.connection.socket.remoteAddress;
-
-    var language = req.acceptsLanguages("en-US", "ru-RU");
-    var os = req.headers['user-agent'].split('(')[1].split(')')[0];
-
-    res.send({
-        "ipaddress": ip,
-        "language": language,
-        "software": os
+        res.send({
+            "ipaddress": ipAdress,
+            "language": language,
+            "software": os
+        });
     });
 });
 
